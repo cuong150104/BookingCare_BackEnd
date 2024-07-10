@@ -1,10 +1,18 @@
-
-let getHomePage = (req, res) => {
-    return res.send("xin chao ban");
+import db from "../models/index"
+let getHomePage = async (req, res) => {
+    try {
+        let data = await db.User.findAll();
+        console.log(data);
+        return res.render('homePage.ejs', {
+            data: JSON.stringify(data)
+        })
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 
 
-module.exports ={
+module.exports = {
     getHomePage: getHomePage,
 }
