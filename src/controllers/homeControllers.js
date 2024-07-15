@@ -26,9 +26,19 @@ const postCRUD = async (req, res) => {
     return res.send("xin chao post crud");
 }
 
+let displayGetCRUD = async (req, res) => {
+    let data = await CRUDServices.getAllUser();
+
+    console.log(data);
+
+    return res.render('displayCRUD.ejs', {
+        dataTable: data
+    });
+}
 
 module.exports = {
     getHomePage,
     getCRUD,
     postCRUD,
+    displayGetCRUD,
 }
