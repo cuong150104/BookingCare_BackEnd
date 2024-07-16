@@ -1,3 +1,4 @@
+import { where } from "sequelize";
 import db from "../models/index";
 import CRUDServices from '../services/CRUDServices';
 let getHomePage = async (req, res) => {
@@ -66,11 +67,21 @@ let putCRUD = async (req, res) => {
 
 }
 
+let deleteCRUD = async (req, res) => {
+    let data = req.query.id;
+    console.log(">>check data", data)
+    if (data) {
+        await CRUDServices.deleteUserById(data);
+        return res.send("delete seccess")
+    }
+    return res.send("delete found")
+}
 module.exports = {
     getHomePage,
     getCRUD,
     postCRUD,
     displayGetCRUD,
     getEditCRUD,
-    putCRUD
+    putCRUD,
+    deleteCRUD
 }
