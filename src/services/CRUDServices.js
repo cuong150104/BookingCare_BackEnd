@@ -1,7 +1,10 @@
 import bcrypt from 'bcryptjs';
 import db from "../models/index";
+import { raw } from 'body-parser';
 
 const salt = bcrypt.genSaltSync(10);
+
+
 let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -26,6 +29,7 @@ let createNewUser = (data) => {
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
+
             let hashPassword = bcrypt.hashSync(password, salt);
             resolve(hashPassword);
         } catch (e) {
@@ -46,7 +50,53 @@ let getAllUser = () => {
         }
     })
 }
+
+let userInfoByUserId = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (userId) {
+                let dataUserById = await db.User.findOne({
+                    where: { id: userId },
+                    raw: true
+                })
+                console.log(dataUserById);
+                resolve(dataUserById);
+            } else {
+
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let putCRUD = (data) => {
+    return new Promise(async (sesolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: data.id },
+            })
+
+            if (user) {
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
+
+                await user.save();
+
+                let allUsers = await db.User.findAll();
+                sesolve(allUsers);
+            } else {
+                sesolve(await db.User.findAll());
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+}
 module.exports = {
     createNewUser,
-    getAllUser
+    getAllUser,
+    userInfoByUserId,
+    putCRUD
 }
