@@ -1,13 +1,23 @@
+import userServices from '../services/userServices'
 
-
-let handelLogin = (req, res) => {
+let handelLogin = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
-    console.log(email)
+
+    if (!email || !password) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'missing input parameter',
+
+        })
+    }
+
+    let userData = await userServices.handelUserLogin(email, password);
+
     return res.status(200).json({
-        message: 'hello word',
-        email: email,
-        password: password
+        errCode: userData.errCode,
+        message: userData.errMessage,
+        user: userData.user ? userData.user : {}
     })
 }
 
