@@ -5,7 +5,7 @@ let handelLogin = async (req, res) => {
     let password = req.body.password;
 
     if (!email || !password) {
-        return res.status(200).json({
+        return res.status(500).json({
             errCode: 1,
             message: 'missing input parameter',
 

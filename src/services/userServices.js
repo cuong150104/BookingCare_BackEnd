@@ -22,7 +22,7 @@ let handelUserLogin = (email, password) => {
                         userData.user = user;
                     } else {
                         userData.errCode = 3;
-                        userData.userMessage = 'wrong password';
+                        userData.errMessage = 'wrong password';
                     }
                 } else {
                     userData.errCode = 2;
