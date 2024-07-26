@@ -21,7 +21,29 @@ let handelLogin = async (req, res) => {
     })
 }
 
+let handleGetAllUsers = async (req, res) => {
+    let id = req.body.id;
+
+    if(!id)
+    {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing required parrameters',
+            users: []
+        })
+    }
+    
+    let users = await userServices.getAllUsers(id);
+
+    return res.status(200).json({
+        errCode: 0,
+        message: 'ok',
+        users
+    })
+}
+
 module.exports = {
     handelLogin,
+    handleGetAllUsers
 
 }
