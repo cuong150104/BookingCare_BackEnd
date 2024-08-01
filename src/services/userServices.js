@@ -1,5 +1,8 @@
 import bcrypt from 'bcryptjs';
 import db from "../models/index";
+import { where } from 'sequelize';
+
+const salt = bcrypt.genSaltSync(10);
 
 let handelUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
@@ -87,8 +90,85 @@ let getAllUsers = (userId) => {
         }
     })
 }
+
+let hashUserPassword = (password) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let hashPassword = bcrypt.hashSync(password, salt);
+            resolve(hashPassword);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+let  createNewUser = (data) =>{
+    return new Promise(async (resolve, reject) => {
+        let check = await checkUserEmail(data.email);
+        if(check === true)
+        {
+            resolve({
+                errCode: 1,
+                message: 'your email is already is used, plase try another email'
+            })
+        }
+        try{
+            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+            await db.User.create({
+                email: data.email,
+                password: hashPasswordFromBcrypt,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                address: data.address,
+                phoneNumber: data.phoneNumber,
+                gender: data.gender,
+                roleId: data.roleId
+            })
+            resolve({
+                errCode: 0,
+                message: 'OK'
+            });
+        }catch(e)
+        {
+            reject(e);
+        }
+    })
+}
+
+let deleteUser = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({ where: { id: id } });
+            console.log(">>check id", user);
+
+            if (!user) {
+                console.log(">>User not found", user);
+                resolve({
+                    errCode: 2,
+                    errMessage: `The user doesn't exist`
+                });
+                return;
+            }
+
+            await db.User.destroy({ where: { id: id } });
+            resolve({
+                errCode: 0,
+                message: 'The user is deleted'
+            });
+        } catch (error) {
+            reject({
+                errCode: 1,
+                errMessage: 'An error occurred'
+            });
+        }
+    });
+}
+
 module.exports = {
     handelUserLogin,
     checkUserEmail,
-    getAllUsers
+    getAllUsers,
+    createNewUser,
+    deleteUser
 }
