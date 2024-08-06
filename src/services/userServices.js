@@ -76,7 +76,7 @@ let getAllUsers = (userId) => {
             }
 
             if (userId && userId !== 'ALL') {
-                users =  await db.User.findOne({
+                users = await db.User.findOne({
                     where: { id: userId },
                     attributes: {
                         exclude: ['password']
@@ -103,17 +103,16 @@ let hashUserPassword = (password) => {
     })
 }
 
-let  createNewUser = (data) =>{
+let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         let check = await checkUserEmail(data.email);
-        if(check === true)
-        {
+        if (check === true) {
             resolve({
                 errCode: 1,
                 message: 'your email is already is used, plase try another email'
             })
         }
-        try{
+        try {
             let hashPasswordFromBcrypt = await hashUserPassword(data.password);
             await db.User.create({
                 email: data.email,
@@ -129,8 +128,7 @@ let  createNewUser = (data) =>{
                 errCode: 0,
                 message: 'OK'
             });
-        }catch(e)
-        {
+        } catch (e) {
             reject(e);
         }
     })
@@ -165,10 +163,51 @@ let deleteUser = (id) => {
     });
 }
 
+let updateUserData = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Missing requied paramet'
+                })
+            }
+            let user = await db.User.findOne({
+                where: { id: data.id },
+                raw: false
+                
+            })
+
+            if (user) {
+                // user.firstName = data.firstName;
+
+                user.firstName = data.firstName,
+                user.lastName = data.lastName,
+                user.address = data.address
+                await user.save();
+
+                resolve({
+                    errCode: 0,
+                    message: 'Update the user secceeds!'
+                });
+            } else {
+                resolve(
+                    {
+                        errCode: 1,
+                        errMessage: `User's not found!`
+                    }
+                );
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 module.exports = {
     handelUserLogin,
     checkUserEmail,
     getAllUsers,
     createNewUser,
-    deleteUser
+    deleteUser,
+    updateUserData
 }

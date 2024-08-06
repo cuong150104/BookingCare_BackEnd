@@ -63,8 +63,10 @@ let handelDeleteUser = async (req, res) => {
     )
 }
 
-let handelEdiUser = (req, res) => {
-
+let handelEdiUser = async (req, res) => {
+    let data = req.body;
+    let message = await userServices.updateUserData(data);
+    return res.status(200).json(message);
 }
 module.exports = {
     handelLogin,
