@@ -105,14 +105,15 @@ let hashUserPassword = (password) => {
 
 let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
-        let check = await checkUserEmail(data.email);
-        if (check === true) {
-            resolve({
-                errCode: 1,
-                message: 'your email is already is used, plase try another email'
-            })
-        }
         try {
+            let check = await checkUserEmail(data.email);
+            if (check === true) {
+                return resolve({
+                    errCode: 1,
+                    message: 'your email is already is used, plase try another email'
+                })
+            }
+             
             let hashPasswordFromBcrypt = await hashUserPassword(data.password);
             await db.User.create({
                 email: data.email,
@@ -175,15 +176,15 @@ let updateUserData = (data) => {
             let user = await db.User.findOne({
                 where: { id: data.id },
                 raw: false
-                
+
             })
 
             if (user) {
                 // user.firstName = data.firstName;
 
                 user.firstName = data.firstName,
-                user.lastName = data.lastName,
-                user.address = data.address
+                    user.lastName = data.lastName,
+                    user.address = data.address
                 await user.save();
 
                 resolve({

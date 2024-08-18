@@ -44,9 +44,10 @@ let handleGetAllUsers = async (req, res) => {
 let handleCreateNewUser = async (req, res) => {
     let message = await userServices.createNewUser(req.body);
     console.log(req.body);
-    return res.status(200).json({
+    console.log(">>check message", message)
+    return res.status(200).json(
         message
-    })
+    )
 }
 
 let handelDeleteUser = async (req, res) => {
