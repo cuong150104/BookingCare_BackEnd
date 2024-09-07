@@ -69,11 +69,27 @@ let handelEdiUser = async (req, res) => {
     let message = await userServices.updateUserData(data);
     return res.status(200).json(message);
 }
+
+let getAllCodes = async(req, res) =>{
+    try {
+        let type = req.query.type;
+        let data = await userServices.getAllCodesServices(type);
+        console.log("check data ", data);
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: "erro from sever"
+        })
+    }
+}
+
 module.exports = {
     handelLogin,
     handleGetAllUsers,
     handleCreateNewUser,
     handelDeleteUser,
-    handelEdiUser
+    handelEdiUser,
+    getAllCodes
 
 }

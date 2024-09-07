@@ -65,7 +65,6 @@ let checkUserEmail = (userEmail) => {
 let getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(">>check id services", userId)
             let users = '';
             if (userId === 'ALL') {
                 users = await db.User.findAll({
@@ -113,7 +112,7 @@ let createNewUser = (data) => {
                     message: 'your email is already is used, plase try another email'
                 })
             }
-             
+
             let hashPasswordFromBcrypt = await hashUserPassword(data.password);
             await db.User.create({
                 email: data.email,
@@ -139,7 +138,6 @@ let deleteUser = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({ where: { id: id } });
-            console.log(">>check id", user);
 
             if (!user) {
                 console.log(">>User not found", user);
@@ -167,6 +165,7 @@ let deleteUser = (id) => {
 let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log(">> check nodejs", data)
             if (!data.id) {
                 resolve({
                     errCode: 2,
@@ -204,11 +203,37 @@ let updateUserData = (data) => {
         }
     })
 }
+
+let getAllCodesServices = (inputType) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (inputType) {
+                let res = {};
+                let data = await db.AllCode.findAll({
+                    where: { type: inputType }
+                });
+                res.errCode = 0;
+                res.data = data;
+                console.log("check sevices +>>>>>", res)
+                resolve(res);
+            } else {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing requid prameter'
+                })
+            }
+
+        } catch (error) {
+            reject(e);
+        }
+    })
+}
 module.exports = {
     handelUserLogin,
     checkUserEmail,
     getAllUsers,
     createNewUser,
     deleteUser,
-    updateUserData
+    updateUserData,
+    getAllCodesServices
 }
